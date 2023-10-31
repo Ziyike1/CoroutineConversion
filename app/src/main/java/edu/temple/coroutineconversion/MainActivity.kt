@@ -2,35 +2,30 @@ package edu.temple.coroutineconversion
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.Button
 import android.widget.ImageView
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
-    //TODO (Refactor to replace Thread code with coroutines)
-
     lateinit var cakeImageView: ImageView
 
-    val handler = Handler(Looper.getMainLooper(), Handler.Callback {
-        cakeImageView.alpha = it.what / 100f
-        true
-    })
-
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         cakeImageView = findViewById(R.id.imageView)
 
-        findViewById<Button>(R.id.revealButton).setOnClickListener{
-            Thread{
-                repeat(100) {
-                    handler.sendEmptyMessage(it)
-                    Thread.sleep(40)
+        findViewById<Button>(R.id.revealButton).setOnClickListener {
+            GlobalScope.launch(Dispatchers.Default) {
+                repeat(100) { i ->
+                    delay(40)
+                    withContext(Dispatchers.Main) {
+                        cakeImageView.alpha = i / 100f
+                    }
                 }
-            }.start()
+            }
         }
     }
 }
