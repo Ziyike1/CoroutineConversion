@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         cakeImageView = findViewById(R.id.imageView)
 
         findViewById<Button>(R.id.revealButton).setOnClickListener {
-            GlobalScope.launch(Dispatchers.Default) {
+                val Scope = CoroutineScope(Dispatchers.Default).launch {
                 repeat(100) { i ->
                     delay(40)
                     withContext(Dispatchers.Main) {
